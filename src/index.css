@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 7%;
+    --foreground: 160 30% 90%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 160 30% 90%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 160 30% 90%;
+
+    --primary: 160 100% 45%;
+    --primary-foreground: 220 20% 7%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 160 20% 80%;
+
+    --muted: 220 15% 13%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 180 60% 40%;
+    --accent-foreground: 220 20% 7%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 15% 18%;
+    --input: 220 15% 15%;
+    --ring: 160 100% 45%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 160 30% 90%;
+    --sidebar-primary: 160 100% 45%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 160 30% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 160 100% 45%;
+
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+
+    --glow-primary: 0 0 20px hsl(160 100% 45% / 0.3);
+    --glow-accent: 0 0 20px hsl(180 60% 40% / 0.2);
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 220 20% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+    --primary: 160 80% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 92%;
+    --secondary-foreground: 220 15% 30%;
+    --muted: 220 10% 95%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 180 50% 35%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 85%;
+    --input: 220 10% 92%;
+    --ring: 160 80% 35%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 15%;
+    --sidebar-primary: 160 80% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 10% 92%;
+    --sidebar-accent-foreground: 220 20% 15%;
+    --sidebar-border: 220 10% 85%;
+    --sidebar-ring: 160 80% 35%;
+
+    --glow-primary: 0 0 20px hsl(160 80% 35% / 0.15);
+    --glow-accent: 0 0 20px hsl(180 50% 35% / 0.1);
+  }
+
+  .dark {
+    --background: 220 20% 7%;
+    --foreground: 160 30% 90%;
+    --card: 220 18% 10%;
+    --card-foreground: 160 30% 90%;
+    --popover: 220 18% 10%;
+    --popover-foreground: 160 30% 90%;
+    --primary: 160 100% 45%;
+    --primary-foreground: 220 20% 7%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 160 20% 80%;
+    --muted: 220 15% 13%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 180 60% 40%;
+    --accent-foreground: 220 20% 7%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 15% 18%;
+    --input: 220 15% 15%;
+    --ring: 160 100% 45%;
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 160 30% 90%;
+    --sidebar-primary: 160 100% 45%;
+    --sidebar-primary-foreground: 220 20% 7%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 160 30% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 160 100% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 10px hsl(160 100% 45% / 0.5);
+  }
+
+  .terminal-grid {
+    background-image: 
+      linear-gradient(hsl(160 100% 45% / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(160 100% 45% / 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .scanline {
+    background: linear-gradient(
+      transparent 50%,
+      hsl(160 100% 45% / 0.02) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+}

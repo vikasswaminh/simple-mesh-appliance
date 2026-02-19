@@ -1,0 +1,29 @@
+[Unit]
+Description=Simple Mesh Link Backend
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=meshlink
+Group=meshlink
+WorkingDirectory=/opt/meshlink
+ExecStart=/opt/meshlink/meshlink-server
+EnvironmentFile=/etc/wgctrl/config.env
+Restart=on-failure
+RestartSec=5s
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/meshlink
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=meshlink
+
+[Install]
+WantedBy=multi-user.target
