@@ -1,73 +1,119 @@
-# Welcome to your Lovable project
+# Simple Mesh Appliance
 
-## Project info
+> Self-hosted WireGuard mesh network manager — Go + PostgreSQL + React on a single $12/mo server.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Live demo:** https://mesh.networkershome.com
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## What it is
 
-**Use Lovable**
+A complete WireGuard VPN mesh controller you can run on any Ubuntu server. Replaces commercial mesh VPN products and Supabase-based backends with a fully self-contained appliance.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- Create and manage WireGuard mesh networks
+- Invite peers by email or shareable link
+- Auto-generate X25519 keypairs in the browser (private keys never leave the client)
+- Assign virtual IPs from `10.10.0.0/24` automatically
+- Export WireGuard config files and QR codes
+- Real-time peer status (online/stale/offline) via Server-Sent Events
+- Full activity log
 
-Changes made via Lovable will be committed automatically to this repo.
+## Stack
 
-**Use your preferred IDE**
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui |
+| Backend | Go 1.22, gorilla/mux |
+| Database | PostgreSQL 16 (auto-migrated at startup) |
+| Auth | JWT HS256 + bcrypt |
+| Real-time | Server-Sent Events (SSE) |
+| Crypto | Web Crypto API (X25519 / Curve25519) |
+| Proxy | Nginx + Let's Encrypt |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Quick Deploy (Ubuntu 24.04)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+# On a fresh Ubuntu 24.04 droplet as root:
+git clone https://github.com/vikasswaminh/simple-mesh-appliance.git /opt/wgctrl-src
+bash /opt/wgctrl-src/deploy/deploy.sh
 ```
 
-**Edit a file directly in GitHub**
+The script installs Go, Node.js, PostgreSQL, Nginx, Certbot, and configures everything end-to-end.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**Requirements:**
+- Ubuntu 24.04 LTS
+- DNS A record pointing your domain to the server IP (before running the script)
+- Update `DOMAIN` in `deploy/deploy.sh` to match your domain
 
-**Use GitHub Codespaces**
+## Local Development
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Backend:**
+```bash
+cd backend
+export DB_URL="postgres://user:pass@localhost/wgctrl?sslmode=disable"
+export JWT_SECRET="your-secret"
+go run .
+# API available at http://localhost:8081
+```
 
-## What technologies are used for this project?
+**Frontend:**
+```bash
+npm install
+npm run dev
+# UI available at http://localhost:5173
+```
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+├── backend/
+│   ├── main.go              # Router, middleware, server setup
+│   ├── config/config.go     # Environment variable loading
+│   ├── db/
+│   │   ├── db.go            # Connection pool
+│   │   ├── migrations.go    # Auto-run DDL at startup
+│   │   └── schema.sql       # Reference schema
+│   ├── handlers/            # HTTP handler per resource
+│   ├── middleware/          # Auth (JWT), CORS, rate limit
+│   └── sse/broker.go        # In-memory pub/sub for SSE
+├── src/
+│   ├── lib/
+│   │   ├── api.ts           # All REST API calls
+│   │   └── wireguard-keys.ts # X25519 key generation (WebCrypto)
+│   ├── hooks/
+│   │   ├── useAuth.tsx      # JWT auth context
+│   │   └── useRealtimePeers.ts # SSE peer updates
+│   ├── components/          # UI panels
+│   └── pages/               # Route pages
+├── deploy/
+│   └── deploy.sh            # Full production deploy script
+└── DOCUMENTATION.md         # Full technical documentation
+```
 
-## How can I deploy this project?
+## API
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+All endpoints under `/api/`. See [DOCUMENTATION.md](DOCUMENTATION.md) for the full API reference.
 
-## Can I connect a custom domain to my Lovable project?
+```
+POST /api/auth/signup
+POST /api/auth/signin
+POST /api/networks/create
+GET  /api/networks
+POST /api/peers/join
+GET  /api/peers
+GET  /api/sse/peers        (Server-Sent Events)
+```
 
-Yes, you can!
+## Security
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- Private keys are generated in-browser and never transmitted
+- bcrypt password hashing
+- JWT authentication on all protected routes
+- Rate limiting: 10 req/s per IP (burst 20)
+- UFW firewall: ports 22, 80, 443 only
+- systemd service hardening (NoNewPrivileges, ProtectSystem, PrivateTmp)
+- HSTS, X-Frame-Options, X-Content-Type-Options headers
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## License
+
+MIT
